@@ -1,0 +1,53 @@
+
+> openforge@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 3.2s
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 6.6s (945 modules)
+ GET /dashboard 200 in 6923ms
+ ✓ Compiled in 597ms (458 modules)
+ ✓ Compiled in 175ms (458 modules)
+ ✓ Compiled in 440ms (458 modules)
+ ✓ Compiled in 5.1s (458 modules)
+ ✓ Compiled in 420ms (458 modules)
+ ✓ Compiled in 1163ms (458 modules)
+ ✓ Compiled in 708ms (458 modules)
+ ✓ Compiled in 5.7s (468 modules)
+ ✓ Compiled in 432ms (468 modules)
+ ✓ Compiled in 808ms (468 modules)
+ ✓ Compiled in 567ms (468 modules)
+ ✓ Compiled in 634ms (468 modules)
+ ✓ Compiled in 519ms (468 modules)
+ ✓ Compiled in 826ms (468 modules)
+ ✓ Compiled in 705ms (468 modules)
+ ✓ Compiled in 714ms (468 modules)
+ ✓ Compiled in 1408ms (509 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 1570ms (520 modules)
+ ✓ Compiled in 1096ms (496 modules)
+ GET /dashboard 200 in 3213ms
+ ✓ Compiled in 2.7s (510 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1428ms (1019 modules)
+ GET /dashboard 404 in 540ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 68ms
+ GET /_next/static/chunks/main-app.js?v=1781076060391 404 in 77ms
+ ✓ Compiled in 442ms (512 modules)
+ ✓ Compiled in 258ms (512 modules)
+ ✓ Compiled in 461ms (512 modules)
+ ✓ Compiled in 801ms (512 modules)
+ ✓ Compiled in 711ms (510 modules)
+ ✓ Compiled in 495ms (510 modules)
+ ✓ Compiled in 312ms (510 modules)
+ ✓ Compiled in 347ms (510 modules)
+ ✓ Compiled in 4.6s (1438 modules)
+ ✓ Compiled in 1070ms (1425 modules)
+ ✓ Compiled in 604ms (1425 modules)
+ ✓ Compiled in 882ms (1425 modules)
+ ✓ Compiled in 763ms (1425 modules)
+ ✓ Compiled in 1953ms (1425 modules)
