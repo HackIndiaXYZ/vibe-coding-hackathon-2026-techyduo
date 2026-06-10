@@ -39,7 +39,7 @@ export function TeamPanel() {
 
   function handleInvite(member: TeamMember) {
     addMember(member);
-    pushNotification(`${member.name} joined!`);
+    pushNotification(`${member.name} has joined the team!`);
     setOpen(false);
   }
 

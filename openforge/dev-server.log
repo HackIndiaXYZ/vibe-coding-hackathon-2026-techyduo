@@ -55,3 +55,8 @@
  ✓ Compiled in 814ms (1425 modules)
  ✓ Compiled in 678ms (1425 modules)
  ✓ Compiled in 538ms (1425 modules)
+▲ Next.js 16.2.9 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.30:3000
+✓ Ready in 0ms
+

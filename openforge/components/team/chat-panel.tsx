@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { MessageSquare, X } from "lucide-react";
+import { useEffect, useState, type KeyboardEvent } from "react";
+import { MessageSquare, Phone, X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/dialog";
 import { useTeamStore } from "@/stores/team-store";
 
+const CURRENT_USER_ID = "alice";
+
 export function ChatPanel() {
   const chatMessages = useTeamStore((state) => state.chatMessages);
   const addMessage = useTeamStore((state) => state.addMessage);
@@ -23,12 +25,43 @@ export function ChatPanel() {
 
   const [input, setInput] = useState("");
   const [chatOpen, setChatOpen] = useState(false);
+  const [callOpen, setCallOpen] = useState(false);
+  const [callStatus, setCallStatus] = useState<"calling" | "in-call">("calling");
+  const [callDuration, setCallDuration] = useState(0);
+
+  const callPartner =
+    members.find((member) => member.id !== CURRENT_USER_ID) || members[0];
+
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    let interval: ReturnType<typeof setInterval> | undefined;
+
+    if (callOpen) {
+      setCallStatus("calling");
+      setCallDuration(0);
+      timeout = setTimeout(() => {
+        setCallStatus("in-call");
+        interval = setInterval(() => {
+          setCallDuration((duration) => duration + 1);
+        }, 1000);
+      }, 2000);
+    }
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [callOpen]);
 
   const handleSend = () => {
     if (input.trim()) {
       addMessage({
         id: Date.now().toString(),
-        senderId: "alice",
+        senderId: CURRENT_USER_ID,
         text: input,
         timestamp: new Date().toISOString(),
       });
@@ -36,8 +69,8 @@ export function ChatPanel() {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
       handleSend();
     }
   };
@@ -47,6 +80,12 @@ export function ChatPanel() {
   };
 
   const last5Messages = chatMessages.slice(-5);
+
+  const formatDuration = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes}:${secs.toString().padStart(2, "0")}`;
+  };
 
   return (
     <>
@@ -61,16 +100,51 @@ export function ChatPanel() {
       {chatOpen ? (
         <Card className="fixed bottom-20 right-4 z-40 w-80 h-96 flex flex-col shadow-lg">
           <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <CardTitle className="text-sm">Team Chat</CardTitle>
-              <button
-                type="button"
-                onClick={() => setChatOpen(false)}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-slate-100"
-                aria-label="Close chat"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <div className="flex items-center gap-2">
+                <Dialog open={callOpen} onOpenChange={setCallOpen}>
+                  <DialogTrigger>
+                    <Button variant="outline" size="sm">
+                      <Phone className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Voice Call</DialogTitle>
+                      <DialogDescription>
+                        Simulated voice call with {callPartner?.name ?? "a teammate"}.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="mt-4 space-y-4">
+                      {callStatus === "calling" ? (
+                        <div>
+                          <p className="text-sm font-medium">Calling {callPartner?.name}...</p>
+                          <p className="text-sm text-muted-foreground">Ringing...</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          <p className="text-sm font-medium">In call with {callPartner?.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            Duration: {formatDuration(callDuration)}
+                          </p>
+                          <Button onClick={() => setCallOpen(false)}>
+                            Hang up
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </DialogContent>
+                </Dialog>
+                <button
+                  type="button"
+                  onClick={() => setChatOpen(false)}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-slate-100"
+                  aria-label="Close chat"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
             <Dialog>
               <DialogTrigger>

@@ -1,13 +1,27 @@
 "use client";
 
+import { useState, type DragEvent } from "react";
 import { useTaskStore } from "@/stores/task-store";
 import { useTeamStore } from "@/stores/team-store";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export function TaskBoard() {
   const tasks = useTaskStore((state) => state.tasks);
   const moveTask = useTaskStore((state) => state.moveTask);
+  const assignTask = useTaskStore((state) => state.assignTask);
   const members = useTeamStore((state) => state.members);
+
+  const [helpTaskId, setHelpTaskId] = useState<string | null>(null);
 
   const todoTasks = tasks.filter((task) => task.status === "todo");
   const inProgressTasks = tasks.filter((task) => task.status === "inprogress");
@@ -16,15 +30,18 @@ export function TaskBoard() {
   const totalTasks = tasks.length;
   const progress = totalTasks > 0 ? (doneTasks.length / totalTasks) * 100 : 0;
 
-  const handleDragStart = (e: React.DragEvent, taskId: string) => {
+  const handleDragStart = (e: DragEvent<HTMLDivElement>, taskId: string) => {
     e.dataTransfer.setData("taskId", taskId);
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
 
-  const handleDrop = (e: React.DragEvent, newStatus: "todo" | "inprogress" | "done") => {
+  const handleDrop = (
+    e: DragEvent<HTMLDivElement>,
+    newStatus: "todo" | "inprogress" | "done",
+  ) => {
     e.preventDefault();
     const taskId = e.dataTransfer.getData("taskId");
     if (taskId) {
@@ -37,16 +54,69 @@ export function TaskBoard() {
     return member?.name || "Unknown";
   };
 
-  const TaskCard = ({ task }: { task: typeof tasks[number] }) => (
-    <div
-      draggable
-      onDragStart={(e) => handleDragStart(e, task.id)}
-      className="bg-white rounded-lg p-3 shadow-sm border cursor-move hover:shadow-md transition-shadow"
-    >
-      <h4 className="text-sm font-medium mb-1">{task.title}</h4>
-      <p className="text-xs text-muted-foreground">{getAssigneeName(task.assigneeId)}</p>
-    </div>
-  );
+  const TaskCard = ({ task }: { task: typeof tasks[number] }) => {
+    const isAlice = task.assigneeId === "alice";
+
+    return (
+      <Card
+        draggable
+        onDragStart={(e) => handleDragStart(e, task.id)}
+        className={`border cursor-move transition-shadow ${
+          isAlice
+            ? "border-blue-400 bg-blue-50 hover:bg-blue-100"
+            : "border-slate-200 bg-white hover:shadow-md"
+        }`}
+      >
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <CardTitle className="text-sm">{task.title}</CardTitle>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {task.description}
+              </p>
+            </div>
+            <Dialog open={helpTaskId === task.id} onOpenChange={(open) => setHelpTaskId(open ? task.id : null)}>
+              <DialogTrigger>
+                <Button variant="outline" size="sm">
+                  Need help?
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>AI Help</DialogTitle>
+                  <DialogDescription>
+                    Suggestions for {task.title}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="mt-4 text-sm text-muted-foreground">
+                  {task.aiHelp}
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </CardHeader>
+        <CardContent className="grid gap-3">
+          <div className="flex flex-col gap-2">
+            <div className="text-xs text-muted-foreground">Assignee</div>
+            <select
+              value={task.assigneeId}
+              onChange={(e) => assignTask(task.id, e.target.value)}
+              className="rounded-md border border-slate-300 bg-white px-2 py-1 text-sm outline-none focus:border-blue-500"
+            >
+              {members.map((member) => (
+                <option key={member.id} value={member.id}>
+                  {member.name}
+                </option>
+              ))}
+            </select>
+            <div className="text-xs text-muted-foreground">
+              Currently assigned to {getAssigneeName(task.assigneeId)}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
 
   return (
     <div className="flex flex-col gap-4">

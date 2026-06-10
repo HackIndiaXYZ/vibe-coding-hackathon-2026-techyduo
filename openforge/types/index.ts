@@ -28,11 +28,28 @@ export interface ChatMessage {
   timestamp: string;
 }
 
+export interface ReviewReply {
+  id: string;
+  authorId: string;
+  text: string;
+  timestamp: string;
+}
+
+export interface Review {
+  id: string;
+  authorId: string;
+  text: string;
+  timestamp: string;
+  replies: ReviewReply[];
+}
+
 export interface Task {
   id: string;
   title: string;
   status: "todo" | "inprogress" | "done";
   assigneeId: string;
+  description: string;
+  aiHelp: string;
 }
 
 export interface FossScanResult {
