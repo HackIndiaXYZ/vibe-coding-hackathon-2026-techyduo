@@ -1,5 +1,6 @@
 # vibe-coding-hackathon-2026-techyduo
 Hackathon team repository for TechyDuo - [hackindia-team:vibe-coding-hackathon-2026:techyduo]
+View Demo : https://sites.google.com/view/hackproject-demo/home
 
 # 🚀 OpenForge
 
@@ -58,6 +59,7 @@ These tools worked in sequence to build the entire OpenForge platform without wr
 
 ---
 ## 📁 Project Structure
+```
 openforge/
 ├── app/                    # Next.js App Router
 │   ├── (dashboard)/        # Dashboard layout and pages
@@ -74,6 +76,7 @@ openforge/
 ├── Dockerfile
 ├── next.config.js
 └── README.md
+```
 ---
 ## 📥 Installation & Running
 
