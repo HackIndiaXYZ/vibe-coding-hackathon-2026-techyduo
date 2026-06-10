@@ -10,8 +10,8 @@ import ReactFlow, {
   useEdgesState,
   addEdge,
   Connection,
-  useReactFlow,
 } from "reactflow";
+import type { ReactFlowInstance } from "reactflow";
 import "reactflow/dist/style.css";
 import { Button } from "@/components/ui/button";
 
@@ -66,7 +66,7 @@ function CodeMapFlow() {
     initialNodes.map((node) => ({ ...node, type: "custom" }))
   );
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const { fitView } = useReactFlow();
+  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [tourIndex, setTourIndex] = useState<number>(-1);
 
   const onConnect = useCallback(
@@ -75,7 +75,9 @@ function CodeMapFlow() {
   );
 
   const handleTour = () => {
-    fitView({ padding: 0.2, duration: 800 });
+    if (!reactFlowInstance) return;
+
+    reactFlowInstance.fitView({ padding: 0.2, duration: 800 });
 
     let index = 0;
     const interval = setInterval(() => {
@@ -111,6 +113,7 @@ function CodeMapFlow() {
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         fitView
+        onInit={setReactFlowInstance}
       >
         <Background />
         <Controls />
