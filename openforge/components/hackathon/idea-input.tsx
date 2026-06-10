@@ -52,13 +52,21 @@ export function IdeaInput() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const SEARCH_KEYWORDS = [
+    "study",
+    "group",
+    "education",
+    "student",
+    "match",
+  ];
+
   async function handleSearchRepos() {
     setLoading(true);
     setError(null);
 
     try {
       const response = await fetch(
-        "/api/search-repos?query=study+group+finder",
+        "/api/search-repos?query=AI-powered+study+group",
       );
 
       if (!response.ok) {
@@ -66,9 +74,15 @@ export function IdeaInput() {
       }
 
       const data = (await response.json()) as Repo[];
-      setRepos(data);
+      const filteredRepos = data.filter((repo) => {
+        const text = `${repo.name} ${repo.description ?? ""}`.toLowerCase();
+        return SEARCH_KEYWORDS.some((keyword) => text.includes(keyword));
+      });
 
-      const analysis = generateGapAnalysis(data);
+      const reposToUse = filteredRepos.length > 0 ? filteredRepos : data;
+      setRepos(reposToUse);
+
+      const analysis = generateGapAnalysis(reposToUse);
       setGapAnalysis(analysis);
     } catch (searchError) {
       setError(
